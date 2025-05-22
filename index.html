@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something Special For You</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        @font-face {
+            font-family: 'Neon';
+            src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2') format('woff2');
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b0b1e 0%, #1e0b33 50%, #330b24 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 2rem;
+            position: relative;
+            max-width: 800px;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Neon frame around container */
+        .neon-frame {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid #ff2d75;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #ff2d75, inset 0 0 10px #ff2d75;
+            z-index: -1;
+            opacity: 0;
+            animation: framePulse 4s infinite alternate;
+        }
+
+        @keyframes framePulse {
+            0% {
+                box-shadow: 0 0 20px #ff2d75, inset 0 0 10px #ff2d75;
+                border-color: #ff2d75;
+            }
+            33% {
+                box-shadow: 0 0 25px #4de8ff, inset 0 0 15px #4de8ff;
+                border-color: #4de8ff;
+            }
+            66% {
+                box-shadow: 0 0 30px #c26eff, inset 0 0 20px #c26eff;
+                border-color: #c26eff;
+            }
+            100% {
+                box-shadow: 0 0 20px #ff2d75, inset 0 0 10px #ff2d75;
+                border-color: #ff2d75;
+            }
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0;
+        }
+
+        .text-glitch {
+            position: relative;
+            color: transparent;
+        }
+
+        .text-glitch::before,
+        .text-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .text-glitch::before {
+            color: #fff;
+            text-shadow: 0 0 10px #ff2d75, 0 0 20px #ff2d75, 0 0 30px #ff2d75, 0 0 40px #ff2d75;
+            z-index: 1;
+            animation: glitch-animation 3s infinite;
+        }
+
+        .text-glitch::after {
+            color: #fff;
+            text-shadow: 0 0 10px #4de8ff, 0 0 20px #4de8ff, 0 0 30px #4de8ff;
+            z-index: 2;
+            animation: glitch-animation 2s infinite reverse;
+        }
+
+        @keyframes glitch-animation {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+            opacity: 0;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            opacity: 0;
+        }
+
+        .btn {
+            position: relative;
+            padding: 1rem 3rem;
+            font-size: 1.25rem;
+            background: transparent;
+            color: #4de8ff;
+            border: 2px solid #4de8ff;
+            border-radius: 50px;
+            box-shadow: 0 0 15px #4de8ff, inset 0 0 15px #4de8ff;
+            text-shadow: 0 0 5px #4de8ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            outline: none;
+        }
+
+        .btn:hover {
+            background: rgba(77, 232, 255, 0.1);
+            box-shadow: 0 0 25px #4de8ff, inset 0 0 25px #4de8ff;
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s ease-out;
+            pointer-events: none;
+        }
+
+        .btn.clicked::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+        }
+
+        /* Music button */
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid #c26eff;
+            color: #c26eff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px #c26eff;
+            z-index: 100;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .music-btn:hover {
+            box-shadow: 0 0 20px #c26eff;
+            transform: scale(1.1);
+        }
+
+        .music-btn.playing::after {
+            content: '♪';
+            position: absolute;
+            animation: musicNote 2s infinite;
+            opacity: 0;
+        }
+
+        @keyframes musicNote {
+            0% {
+                top: 0;
+                left: 0;
+                opacity: 1;
+            }
+            100% {
+                top: -20px;
+                left: 10px;
+                opacity: 0;
+            }
+        }
+
+        /* Heart shape that appears on click */
+        .heart {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9;
+            transition: all 0.5s ease;
+        }
+
+        .heart::before, 
+        .heart::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            border-radius: 50px 50px 0 0;
+            background: #ff2d75;
+            box-shadow: 0 0 15px #ff2d75;
+        }
+
+        .heart::before {
+            left: 50px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        .magic-text {
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0;
+            color: #c26eff;
+            text-shadow: 0 0 10px #c26eff;
+            pointer-events: none;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        /* Countdown styling */
+        .countdown-container {
+            display: none;
+            opacity: 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .countdown-text {
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 0 0 10px #c26eff;
+        }
+
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #ff2d75, 0 0 20px #ff2d75;
+        }
+
+        /* Polaroid photo effect */
+        .polaroid {
+            display: none;
+            background: #fff;
+            padding: 1rem;
+            padding-bottom: 3rem;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            transform: rotate(-5deg);
+            transition: all 0.3s ease;
+            opacity: 0;
+            z-index: 20;
+            position: relative;
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+        }
+
+        .polaroid img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 0.5rem;
+        }
+
+        .polaroid p {
+            font-family: 'Neon', cursive;
+            color: #333;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        /* Animated background elements */
+        .bg-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(77, 232, 255, 0.3), transparent);
+            height: 1px;
+            width: 100%;
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        .neon-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid;
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0b0b1e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1.5s ease;
+        }
+
+        .loader {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top-color: #ff2d75;
+            border-bottom-color: #4de8ff;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+                border-top-color: #ff2d75;
+                border-bottom-color: #4de8ff;
+            }
+            50% {
+                border-top-color: #4de8ff;
+                border-bottom-color: #ff2d75;
+            }
+            100% {
+                transform: rotate(360deg);
+                border-top-color: #ff2d75;
+                border-bottom-color: #4de8ff;
+            }
+        }
+
+        /* Custom cursor */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid #ff2d75;
+            box-shadow: 0 0 15px #ff2d75;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .inner-cursor {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff2d75;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: background 0.3s;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a0b33 0%, #330b24 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 30px #c26eff, inset 0 0 15px #c26eff;
+            border: 2px solid #c26eff;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 0 0 10px #c26eff;
+        }
+
+        .modal-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            text-shadow: 0 0 5px #fff;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .close-modal:hover {
+            opacity: 1;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 2px solid #4de8ff;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            border-radius: 5px;
+            outline: none;
+            box-shadow: 0 0 10px rgba(77, 232, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .modal-input:focus {
+            border-color: #ff2d75;
+            box-shadow: 0 0 15px rgba(255, 45, 117, 0.7);
+        }
+
+        .modal-btn {
+            padding: 0.7rem 2rem;
+            background: transparent;
+            border: 2px solid #4de8ff;
+            color: #4de8ff;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 0 10px #4de8ff, inset 0 0 5px #4de8ff;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: rgba(77, 232, 255, 0.1);
+            box-shadow: 0 0 15px #4de8ff, inset 0 0 10px #4de8ff;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 2.5rem;
+                font-size: 1.1rem;
+            }
+
+            .countdown {
+                font-size: 2.5rem;
+            }
+
+            .polaroid {
+                transform: rotate(-3deg) scale(0.9);
+            }
+
+            .polaroid img {
+                width: 180px;
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Custom cursor -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="inner-cursor" id="innerCursor"></div>
+
+    <!-- Background canvas -->
+    <canvas id="bgCanvas"></canvas>
+    
+    <!-- Music button -->
+    <button class="music-btn" id="musicBtn">♪</button>
+    
+    <!-- Main content -->
+    <div class="container">
+        <div class="neon-frame"></div>
+        <h1 class="text-glitch" data-text="I have something for you...">I have something for you...</h1>
+        <p class="subtitle">A special moment awaits...</p>
+        
+        <div class="btn-container">
+            <button class="btn" id="revealBtn">Click to Reveal</button>
+            <button class="btn" id="specialBtn" style="display: none; color: #ff2d75; border-color: #ff2d75; box-shadow: 0 0 15px #ff2d75, inset 0 0 15px #ff2d75; text-shadow: 0 0 5px #ff2d75;">Special Message</button>
+        </div>
+        
+        <!-- Countdown section -->
+        <div class="countdown-container" id="countdownContainer">
+            <p class="countdown-text">Magic happens in...</p>
+            <div class="countdown" id="countdown">5</div>
+        </div>
+        
+        <!-- Polaroid photo -->
+        <div class="polaroid" id="polaroid">
+            
+            <p>Forever yours ♥</p>
+        </div>
+    </div>
+
+    <!-- Heart element -->
+    <div class="heart" id="heart"></div>
+    
+    <!-- Name input modal -->
+    <div class="modal" id="nameModal">
+        <div class="modal-content animate__animated animate__fadeIn">
+            <button class="close-modal" id="closeModal">×</button>
+            <h2>Before we begin...</h2>
+            <p>What's your name, beautiful?</p>
+            <input type="text" class="modal-input" id="nameInput" placeholder="Enter your name...">
+            <button class="modal-btn" id="submitName">Continue</button>
+        </div>
+    </div>
+    
+    <!-- Special message modal -->
+    <div class="modal" id="messageModal">
+        <div class="modal-content animate__animated animate__fadeIn">
+            <button class="close-modal" id="closeMessageModal">×</button>
+            <h2>My Special One</h2>
+            <p id="personalMessage">You are the light in my darkness, the warmth in my cold days. Every moment with you feels like magic, and I can't wait to create more memories together.</p>
+            <button class="modal-btn" id="loveButton">I Love You Too</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Background and loading setup
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const container = document.querySelector('.container');
+            const revealBtn = document.getElementById('revealBtn');
+            const specialBtn = document.getElementById('specialBtn');
+            const heart = document.getElementById('heart');
+            const musicBtn = document.getElementById('musicBtn');
+            const nameModal = document.getElementById('nameModal');
+            const closeModal = document.getElementById('closeModal');
+            const nameInput = document.getElementById('nameInput');
+            const submitName = document.getElementById('submitName');
+            const messageModal = document.getElementById('messageModal');
+            const closeMessageModal = document.getElementById('closeMessageModal');
+            const personalMessage = document.getElementById('personalMessage');
+            const loveButton = document.getElementById('loveButton');
+            const countdownContainer = document.getElementById('countdownContainer');
+            const countdown = document.getElementById('countdown');
+            const polaroid = document.getElementById('polaroid');
+            const neonFrame = document.querySelector('.neon-frame');
+            const heading = document.querySelector('h1');
+            const subtitle = document.querySelector('.subtitle');
+            const btnContainer = document.querySelector('.btn-container');
+            
+            // Custom cursor setup
+            const customCursor = document.getElementById('customCursor');
+            const innerCursor = document.getElementById('innerCursor');
+            
+            document.addEventListener('mousemove', (e) => {
+                customCursor.style.left = e.clientX + 'px';
+                customCursor.style.top = e.clientY + 'px';
+                innerCursor.style.left = e.clientX + 'px';
+                innerCursor.style.top = e.clientY + 'px';
+            });
+            
+            document.addEventListener('mousedown', () => {
+                customCursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                innerCursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            });
+            
+            document.addEventListener('mouseup', () => {
+                customCursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                innerCursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
+            
+            // Hover effect for buttons
+            const buttons = document.querySelectorAll('.btn, .music-btn, .modal-btn, .close-modal');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    customCursor.style.width = '40px';
+                    customCursor.style.height = '40px';
+                    customCursor.style.borderColor = '#4de8ff';
+                    customCursor.style.boxShadow = '0 0 20px #4de8ff';
+                    innerCursor.style.background = '#4de8ff';
+                });
+                
+                button.addEventListener('mouseleave', () => {
+                    customCursor.style.width = '20px';
+                    customCursor.style.height = '20px';
+                    customCursor.style.borderColor = '#ff2d75';
+                    customCursor.style.boxShadow = '0 0 15px #ff2d75';
+                    innerCursor.style.background = '#ff2d75';
+                });
+            });
+            
+            // Create audio context and element
+            let audio = new Audio();
+
+            // Simulate loading
+            setTimeout(() => {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    
+                    // Show modal after loading is complete
+                    nameModal.style.display = 'flex';
+                    setTimeout(() => {
+                        nameModal.style.opacity = '1';
+                    }, 100);
+                    
+                    // Initial animations
+                    gsap.to(musicBtn, {
+                        opacity: 1,
+                        duration: 1,
+                        delay: 0.5
+                    });
+                    
+                    gsap.to(neonFrame, {
+                        opacity: 1,
+                        duration: 1,
+                        delay: 1
+                    });
+                    
+                    gsap.to(heading, {
+                        opacity: 1,
+                        duration: 1,
+                        delay: 1.2,
+                        y: 0,
+                        ease: "power2.out",
+                        onComplete: () => {
+                            // Start canvas animations after initial load
+                            initCanvas();
+                            createBackgroundElements();
+                        }
+                    });
+                    
+                    gsap.to(subtitle, {
+                        opacity: 1,
+                        duration: 1,
+                        delay: 1.5
+                    });
+                    
+                    gsap.to(btnContainer, {
+                        opacity: 1,
+                        duration: 1,
+                        delay: 1.8
+                    });
+                }, 1500);
+            }, 2000);
+            
+            // Close name modal and submit
+            closeModal.addEventListener('click', () => {
+                nameModal.style.opacity = '0';
+                setTimeout(() => {
+                    nameModal.style.display = 'none';
+                }, 500);
+            });
+            
+            submitName.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                if (name) {
+                    // Personalize the message if a name is provided
+                    personalMessage.textContent = `Dear ${name}, you are the light in my darkness, the warmth in my cold days. Every moment with you feels like magic, and I can't wait to create more memories together.`;
+                }
+                
+                nameModal.style.opacity = '0';
+                setTimeout(() => {
+                    nameModal.style.display = 'none';
+                    // Play music after submitting name
+                    playBackgroundMusic();
+                }, 500);
+            });
+            
+            // Close message modal
+            closeMessageModal.addEventListener('click', () => {
+                messageModal.style.opacity = '0';
+                setTimeout(() => {
+                    messageModal.style.display = 'none';
+                }, 500);
+            });
+            
+            // Love button click effect
+            loveButton.addEventListener('click', () => {
+                messageModal.style.opacity = '0';
+                setTimeout(() => {
+                    messageModal.style.display = 'none';
+                    
+                    // Show lots of hearts
+                    for (let i = 0; i < 20; i++) {
+                        createFloatingHeart();
+                    }
+                }, 500);
+            });
+            
+            // Special message button
+            specialBtn.addEventListener('click', function() {
+                this.classList.add('clicked');
+                
+                // Show the message modal
+                messageModal.style.display = 'flex';
+                setTimeout(() => {
+                    messageModal.style.opacity = '1';
+                }, 100);
+            });
+            
+            // Button click event
+            revealBtn.addEventListener('click', function() {
+                this.classList.add('clicked');
+                
+                // Show hearts and magical text effects
+                showMagicEffects();
+                
+                // Show countdown instead of immediate redirect
+                revealBtn.style.display = 'none';
+                countdownContainer.style.display = 'flex';
+                
+                gsap.to(countdownContainer, {
+                    opacity: 1,
+                    duration: 0.5
+                });
+                
+                // Start countdown
+                let count = 5;
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    countdown.textContent = count;
+                    
+                    if (count <= 0) {
+                        clearInterval(countdownInterval);
+                        
+                        // Show polaroid before redirect
+                        polaroid.style.display = 'block';
+                        gsap.to(polaroid, {
+                            opacity: 1,
+                            duration: 1,
+                            scale: 1,
+                            rotation: 0
+                        });
+                        
+                        // Show special message button
+                        specialBtn.style.display = 'block';
+                        gsap.from(specialBtn, {
+                            y: 20,
+                            opacity: 0,
+                            duration: 0.8,
+                            delay: 0.5
+                        });
+                        
+                        // Set timeout for redirect
+                        setTimeout(function() {
+                            window.location.href = 'propose.html';
+                        }, 7000); // Give user time to see the polaroid and special button
+                    }
+                }, 1000);
+            });
+            
+            // Music button functionality
+            musicBtn.addEventListener('click', function() {
+                if (audio.paused) {
+                    playBackgroundMusic();
+                } else {
+                    audio.pause();
+                    this.classList.remove('playing');
+                    this.textContent = '♪';
+                }
+            });
+            
+            function playBackgroundMusic() {
+                // Use a romantic track URL - replace with your actual music file
+                audio.src = 'https://soundsample/romantic.mp3'; // Placeholder URL
+                audio.loop = true;
+                
+                // Try to play and handle autoplay restrictions
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        musicBtn.classList.add('playing');
+                        musicBtn.textContent = '♫';
+                    }).catch(error => {
+                        console.log('Autoplay prevented. Please interact with the document first.');
+                    });
+                }
+            }
+            
+            function showMagicEffects() {
+                // Display heart in center
+                heart.style.visibility = 'visible';
+                heart.style.opacity = '1';
+                heart.style.left = '50%';
+                heart.style.top = '50%';
+                heart.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                
+                // Animate the heart
+                gsap.to(heart, {
+                    scale: 2,
+                    opacity: 0,
+                    duration: 1.5,
+                    onComplete: function() {
+                        heart.style.visibility = 'hidden';
+                        heart.style.opacity = '0';
+                        heart.style.transform = 'translate(-50%, -50%) scale(1)';
+                    }
+                });
+                
+                // Create floating magic texts
+                for (let i = 0; i < 5; i++) {
+                    createMagicText();
+                }
+                
+                // Create additional floating hearts
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        createFloatingHeart();
+                    }, i * 300);
+                }
+            }
+            
+            // Function to create magic floating text
+            function createMagicText() {
+                const magicTexts = ['Love', 'Forever', 'Together', 'Soulmate', 'Heart', 'Dream', 'Magic', 'Cherish'];
+                const randomText = magicTexts[Math.floor(Math.random() * magicTexts.length)];
+                
+                const text = document.createElement('div');
+                text.classList.add('magic-text');
+                text.textContent = randomText;
+                document.body.appendChild(text);
+                
+                // Set random position
+                const xPos = Math.random() * window.innerWidth;
+                const yPos = Math.random() * window.innerHeight;
+                
+                text.style.left = `${xPos}px`;
+                text.style.top = `${yPos}px`;
+                text.style.opacity = '0';
+                
+                // Animate the text
+                gsap.to(text, {
+                    opacity: 0.8,
+                    duration: 0.5,
+                    onComplete: function() {
+                        gsap.to(text, {
+                            y: -100,
+                            opacity: 0,
+                            duration: 3,
+                            ease: "power1.out",
+                            delay: 1,
+                            onComplete: function() {
+                                document.body.removeChild(text);
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Function to create floating hearts
+            function createFloatingHeart() {
+                const floatingHeart = document.createElement('div');
+                floatingHeart.classList.add('heart');
+                document.body.appendChild(floatingHeart);
+                
+                // Set random position
+                const xPos = Math.random() * window.innerWidth;
+                const yPos = window.innerHeight + 100;
+                
+                floatingHeart.style.left = `${xPos}px`;
+                floatingHeart.style.top = `${yPos}px`;
+                floatingHeart.style.opacity = '0';
+                floatingHeart.style.transform = `scale(${0.3 + Math.random() * 0.5})`;
+                floatingHeart.style.visibility = 'visible';
+                
+                // Animate the heart
+                gsap.to(floatingHeart, {
+                    opacity: 0.8,
+                    duration: 0.5,
+                    onComplete: function() {
+                        gsap.to(floatingHeart, {
+                            y: -window.innerHeight - 200,
+                            x: (Math.random() - 0.5) * 200,
+                            rotation: Math.random() * 360,
+                            opacity: 0,
+                            duration: 5 + Math.random() * 5,
+                            ease: "power1.out",
+                            onComplete: function() {
+                                document.body.removeChild(floatingHeart);
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Canvas background animation
+            function initCanvas() {
+                const canvas = document.getElementById('bgCanvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                // Particles
+                const particles = [];
+                const particleCount = 100;
+                
+                // Create particles
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 2 + 1,
+                        color: getRandomColor(),
+                        speedX: (Math.random() - 0.5) * 0.5,
+                        speedY: (Math.random() - 0.5) * 0.5,
+                        opacity: Math.random() * 0.5 + 0.2
+                    });
+                }
+                
+                function getRandomColor() {
+                    const colors = ['#ff2d75', '#4de8ff', '#c26eff', '#ffeb3b'];
+                    return colors[Math.floor(Math.random() * colors.length)];
+                }
+                
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Update and draw particles
+                    for (let i = 0; i < particles.length; i++) {
+                        const p = particles[i];
+                        
+                        // Move particles
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        
+                        // Wrap around edges
+                        if (p.x < 0) p.x = canvas.width;
+                        if (p.x > canvas.width) p.x = 0;
+                        if (p.y < 0) p.y = canvas.height;
+                        if (p.y > canvas.height) p.y = 0;
+                        
+                        // Draw particle
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = p.opacity;
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    }
+                    
+                    // Draw connecting lines between nearby particles
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                    ctx.lineWidth = 0.5;
+                    
+                    for (let i = 0; i < particles.length; i++) {
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const dx = particles[i].x - particles[j].x;
+                            const dy = particles[i].y - particles[j].y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < 100) {
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.globalAlpha = 0.1 * (1 - distance / 100);
+                                ctx.stroke();
+                                ctx.globalAlpha = 1;
+                            }
+                        }
+                    }
+                }
+                
+                animate();
+                
+                // Resize canvas when window size changes
+                window.addEventListener('resize', () => {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                });
+            }
+            
+            // Create background lines and circles
+            function createBackgroundElements() {
+                // Create horizontal lines
+                for (let i = 0; i < 15; i++) {
+                    const line = document.createElement('div');
+                    line.classList.add('bg-line');
+                    line.style.top = Math.random() * window.innerHeight + 'px';
+                    line.style.animationDelay = Math.random() * 5 + 's';
+                    document.body.appendChild(line);
+                    
+                    // Animate line
+                    gsap.to(line, {
+                        x: window.innerWidth,
+                        repeat: -1,
+                        duration: 10 + Math.random() * 10,
+                        ease: "none",
+                        opacity: 0.1 + Math.random() * 0.4
+                    });
+                }
+                
+                // Create neon circles
+                for (let i = 0; i < 8; i++) {
+                    const circle = document.createElement('div');
+                    circle.classList.add('neon-circle');
+                    
+                    const size = 50 + Math.random() * 200;
+                    const colors = ['#ff2d75', '#4de8ff', '#c26eff'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    circle.style.width = size + 'px';
+                    circle.style.height = size + 'px';
+                    circle.style.borderColor = color;
+                    circle.style.boxShadow = `0 0 20px ${color}`;
+                    circle.style.left = Math.random() * window.innerWidth + 'px';
+                    circle.style.top = Math.random() * window.innerHeight + 'px';
+                    
+                    document.body.appendChild(circle);
+                    
+                    // Animate circle
+                    gsap.to(circle, {
+                        scale: 1.5,
+                        opacity: 0.1,
+                        duration: 5 + Math.random() * 5,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Love Story</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #050711;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .scene-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: twinkle 3s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; filter: blur(1px); }
+            50% { opacity: 0.8; filter: blur(0px); }
+            100% { opacity: 0.3; filter: blur(1px); }
+        }
+        
+        /* Character SVGs */
+        .character {
+            position: absolute;
+            bottom: 20%;
+            height: 40%;
+            transition: all 2s ease;
+        }
+        
+        .boy {
+            left: 15%;
+            filter: drop-shadow(0 0 12px rgba(80, 200, 255, 0.8));
+            z-index: 10;
+        }
+        
+        .girl {
+            right: 15%;
+            filter: drop-shadow(0 0 12px rgba(255, 100, 255, 0.8));
+            z-index: 10;
+        }
+        
+        .rose {
+            position: absolute;
+            bottom: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 18%;
+            filter: drop-shadow(0 0 15px rgba(255, 50, 100, 0.9));
+            opacity: 0;
+            transition: all 1.5s ease;
+            z-index: 20;
+        }
+        
+        .heart {
+            position: absolute;
+            top: 20%;
+            right: 20%;
+            height: 15%;
+            filter: drop-shadow(0 0 15px rgba(255, 50, 100, 0.9));
+            opacity: 0;
+            transform: scale(0);
+            transition: all 1s ease;
+            animation: float 3s infinite ease-in-out;
+            z-index: 5;
+        }
+        
+        @keyframes float {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.1) translateY(-10px); }
+            100% { transform: scale(1) translateY(0); }
+        }
+        
+        .final-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            font-weight: bold;
+            color: #ff5ebc;
+            text-shadow: 
+                0 0 7px #ff5ebc,
+                0 0 20px #ff5ebc,
+                0 0 40px #ff5ebc,
+                0 0 60px #ff1f9d;
+            opacity: 0;
+            text-align: center;
+            width: 100%;
+            font-family: 'Arial', sans-serif;
+            letter-spacing: 5px;
+            animation: none;
+            z-index: 100;
+        }
+        
+        @keyframes pulse {
+            0% { text-shadow: 0 0 7px #ff5ebc, 0 0 20px #ff5ebc, 0 0 40px #ff5ebc, 0 0 60px #ff1f9d; }
+            50% { text-shadow: 0 0 15px #ff5ebc, 0 0 30px #ff5ebc, 0 0 60px #ff5ebc, 0 0 80px #ff1f9d; }
+            100% { text-shadow: 0 0 7px #ff5ebc, 0 0 20px #ff5ebc, 0 0 40px #ff5ebc, 0 0 60px #ff1f9d; }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #startPrompt {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.4rem;
+            animation: fadeInOut 2s infinite;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            z-index: 100;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        
+        .spotlight {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.05) 40%,
+                transparent 70%
+            );
+            filter: blur(10px);
+            opacity: 0;
+            transition: all 1.5s ease;
+            z-index: 1;
+        }
+        
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(to top, rgba(10, 15, 30, 0.7), transparent);
+            z-index: 5;
+        }
+        
+        .neon-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 6;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            filter: blur(1px);
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            .character {
+                height: 30%;
+            }
+            
+            .boy {
+                left: 10%;
+            }
+            
+            .girl {
+                right: 10%;
+            }
+            
+            .rose {
+                height: 15%;
+            }
+            
+            .final-message {
+                font-size: 3rem;
+                letter-spacing: 3px;
+            }
+            
+            #startPrompt {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scene-container" id="sceneContainer">
+        <!-- Stars will be added via JavaScript -->
+        <div class="neon-particles" id="particles"></div>
+        <div class="ground"></div>
+        
+        <!-- Spotlights -->
+        <div class="spotlight" id="spotlightBoy" style="left: 20%; bottom: 15%;"></div>
+        <div class="spotlight" id="spotlightGirl" style="right: 20%; bottom: 15%;"></div>
+        <div class="spotlight" id="spotlightCenter" style="left: 50%; bottom: 15%; transform: translateX(-50%);"></div>
+        
+        <!-- Boy Character (SVG) -->
+        <svg class="character boy" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="boyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#5edfff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0ab6ff;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Head -->
+            <circle cx="50" cy="40" r="20" stroke="url(#boyGradient)" stroke-width="2.5" fill="none" />
+            
+            <!-- Body -->
+            <line x1="50" y1="60" x2="50" y2="120" stroke="url(#boyGradient)" stroke-width="2.5" id="boyBody" />
+            
+            <!-- Arms -->
+            <line x1="50" y1="80" x2="20" y2="100" stroke="url(#boyGradient)" stroke-width="2.5" class="left-arm" id="leftArm" />
+            <line x1="50" y1="80" x2="80" y2="100" stroke="url(#boyGradient)" stroke-width="2.5" class="right-arm" id="rightArm" />
+            
+            <!-- Legs -->
+            <line x1="50" y1="120" x2="30" y2="180" stroke="url(#boyGradient)" stroke-width="2.5" id="leftLeg" />
+            <line x1="50" y1="120" x2="70" y2="180" stroke="url(#boyGradient)" stroke-width="2.5" id="rightLeg" />
+            
+            <!-- Smile -->
+            <path d="M40,45 Q50,55 60,45" stroke="url(#boyGradient)" stroke-width="2.5" fill="none" />
+            
+            <!-- Eyes -->
+            <circle cx="42" cy="35" r="3" stroke="url(#boyGradient)" stroke-width="2.5" fill="none" />
+            <circle cx="58" cy="35" r="3" stroke="url(#boyGradient)" stroke-width="2.5" fill="none" />
+        </svg>
+        
+        <!-- Girl Character (SVG) -->
+        <svg class="character girl" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="girlGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ff9eee;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ff3fdc;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Head -->
+            <circle cx="50" cy="40" r="20" stroke="url(#girlGradient)" stroke-width="2.5" fill="none" />
+            
+            <!-- Hair -->
+            <path d="M30,40 Q35,10 50,15 Q65,10 70,40" stroke="url(#girlGradient)" stroke-width="2.5" fill="none" />
+            
+            <!-- Body (Dress shape) -->
+            <path d="M50,60 Q40,90 30,120 L70,120 Q60,90 50,60" stroke="url(#girlGradient)" stroke-width="2.5" fill="none" />
+            
+            <!-- Arms -->
+            <line x1="40" y1="75" x2="20" y2="85" stroke="url(#girlGradient)" stroke-width="2.5" id="girlLeftArm" />
+            <line x1="60" y1="75" x2="80" y2="85" stroke="url(#girlGradient)" stroke-width="2.5" id="girlRightArm" />
+            
+            <!-- Legs -->
+            <line x1="40" y1="120" x2="40" y2="180" stroke="url(#girlGradient)" stroke-width="2.5" />
+            <line x1="60" y1="120" x2="60" y2="180" stroke="url(#girlGradient)" stroke-width="2.5" />
+            
+            <!-- Smile -->
+            <path d="M40,45 Q50,55 60,45" stroke="url(#girlGradient)" stroke-width="2.5" fill="none" id="girlSmile" />
+            
+            <!-- Eyes -->
+            <circle cx="42" cy="35" r="3" stroke="url(#girlGradient)" stroke-width="2.5" fill="none" />
+            <circle cx="58" cy="35" r="3" stroke="url(#girlGradient)" stroke-width="2.5" fill="none" />
+        </svg>
+        
+        <!-- Enhanced Rose (SVG) -->
+        <svg class="rose" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="roseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ff3a7c;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ff0051;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="stemGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#39ff14;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#00c700;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Improved Rose Petals -->
+            <path d="M50,20 
+                    C55,15 65,15 65,25 
+                    C70,15 80,20 70,30 
+                    C80,30 80,40 70,40 
+                    C80,45 75,55 65,45 
+                    C65,55 55,55 50,45 
+                    C45,55 35,55 35,45 
+                    C25,55 20,45 30,40 
+                    C20,40 20,30 30,30 
+                    C20,20 30,15 35,25 
+                    C35,15 45,15 50,20" 
+                  stroke="url(#roseGradient)" stroke-width="2" fill="none" />
+            
+            <!-- Stem -->
+            <line x1="50" y1="45" x2="50" y2="100" stroke="url(#stemGradient)" stroke-width="2.5" />
+            
+            <!-- Leaves -->
+            <path d="M50,60 C60,50 75,55 65,70" stroke="url(#stemGradient)" stroke-width="2" fill="none" />
+            <path d="M50,80 C40,70 25,75 35,90" stroke="url(#stemGradient)" stroke-width="2" fill="none" />
+        </svg>
+        
+        <!-- Enhanced Heart (SVG) -->
+        <svg class="heart" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ff3a7c;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ff0051;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <path d="M50,30 L65,15 A15,15 0 0,1 90,40 L50,80 L10,40 A15,15 0 0,1 35,15 L50,30" 
+                  stroke="url(#heartGradient)" stroke-width="3" fill="none" />
+        </svg>
+        
+        <!-- Final Message -->
+        <div class="final-message" id="finalMessage">I Love You</div>
+        
+        <!-- Start Prompt -->
+        <div id="startPrompt">Click anywhere to begin the story</div>
+    </div>
+    
+    <script>
+        // Elements
+        const sceneContainer = document.getElementById('sceneContainer');
+        const finalMessage = document.getElementById('finalMessage');
+        const startPrompt = document.getElementById('startPrompt');
+        const boy = document.querySelector('.boy');
+        const girl = document.querySelector('.girl');
+        const rose = document.querySelector('.rose');
+        const heart = document.querySelector('.heart');
+        const particles = document.getElementById('particles');
+        
+        // Spotlight elements
+        const spotlightBoy = document.getElementById('spotlightBoy');
+        const spotlightGirl = document.getElementById('spotlightGirl');
+        const spotlightCenter = document.getElementById('spotlightCenter');
+        
+        // Boy elements for animation
+        const boyBody = document.getElementById('boyBody');
+        const leftArm = document.getElementById('leftArm');
+        const rightArm = document.getElementById('rightArm');
+        const leftLeg = document.getElementById('leftLeg');
+        const rightLeg = document.getElementById('rightLeg');
+        
+        // Girl elements for animation
+        const girlLeftArm = document.getElementById('girlLeftArm');
+        const girlRightArm = document.getElementById('girlRightArm');
+        const girlSmile = document.getElementById('girlSmile');
+        
+        // Create stars with different colors
+        function createStars() {
+            const colors = ['#ffffff', '#5edfff', '#ff9eee', '#ffbf40'];
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random size between 1px and 4px
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Random position
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Random color
+                star.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random animation delay
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                
+                sceneContainer.appendChild(star);
+            }
+        }
+        
+        // Create neon particles
+        function createNeonParticles() {
+            const colors = ['#5edfff', '#ff9eee', '#ff3a7c', '#39ff14', '#ffbf40'];
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Size
+                    const size = Math.random() * 4 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Position
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.bottom = '0';
+                    
+                    // Color with glow
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.backgroundColor = color;
+                    particle.style.boxShadow = `0 0 10px ${color}`;
+                    
+                    particles.appendChild(particle);
+                    
+                    // Animate
+                    setTimeout(() => {
+                        particle.style.transition = `all ${Math.random() * 8 + 7}s ease-out`;
+                        particle.style.transform = `translateY(-${Math.random() * 80 + 20}vh)`;
+                        particle.style.opacity = Math.random() * 0.7 + 0.3;
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            particles.removeChild(particle);
+                        }, 15000);
+                    }, 100);
+                }, i * 500);
+            }
+        }
+        
+        // Initialize scene
+        function initScene() {
+            createStars();
+            createNeonParticles();
+            
+            // Set initial positions
+            boy.style.transform = 'translateX(0)';
+            girl.style.transform = 'translateX(0)';
+            
+            // Initial visibility
+            rose.style.opacity = '0';
+            heart.style.opacity = '0';
+            finalMessage.style.opacity = '0';
+            
+            // Initialize event listener for scene transition
+            document.body.addEventListener('click', startAnimation);
+            
+            // Set interval for continuous particles
+            setInterval(createNeonParticles, 15000);
+        }
+        
+        // Boy kneeling animation
+        function animateBoyKneeling() {
+            // Update SVG elements for kneeling position
+            boyBody.setAttribute('y2', '110');
+            
+            // Arms holding rose
+            leftArm.setAttribute('x2', '42');
+            leftArm.setAttribute('y2', '100');
+            rightArm.setAttribute('x2', '58');
+            rightArm.setAttribute('y2', '100');
+            
+            // Legs in kneeling position
+            leftLeg.setAttribute('x1', '50');
+            leftLeg.setAttribute('y1', '110');
+            leftLeg.setAttribute('x2', '30');
+            leftLeg.setAttribute('y2', '140');
+            
+            rightLeg.setAttribute('x1', '50');
+            rightLeg.setAttribute('y1', '110');
+            rightLeg.setAttribute('x2', '50');
+            rightLeg.setAttribute('y2', '140');
+        }
+        
+        // Girl happy reaction
+        function animateGirlHappy() {
+            // Move arms up in excitement
+            girlLeftArm.setAttribute('x2', '25');
+            girlLeftArm.setAttribute('y2', '60');
+            
+            girlRightArm.setAttribute('x2', '75');
+            girlRightArm.setAttribute('y2', '60');
+            
+            // Bigger smile
+            girlSmile.setAttribute('d', 'M40,45 Q50,60 60,45');
+        }
+        
+        // Start animation sequence
+        function startAnimation() {
+            // Remove event listener to prevent multiple triggers
+            document.body.removeEventListener('click', startAnimation);
+            startPrompt.style.display = 'none';
+            
+            // Turn on spotlights
+            spotlightBoy.style.opacity = '1';
+            spotlightGirl.style.opacity = '1';
+            
+            // After a short delay, start the boy walking
+            setTimeout(() => {
+                // Move boy to center near girl
+                boy.style.left = '40%';
+                
+                // After boy reaches position, show proposal
+                setTimeout(() => {
+                    // Show center spotlight
+                    spotlightCenter.style.opacity = '1';
+                    
+                    // Animate boy kneeling
+                    animateBoyKneeling();
+                    
+                    // Make rose visible and position to boy's hands
+                    setTimeout(() => {
+                        rose.style.opacity = '1';
+                        rose.style.left = '48%';
+                        rose.style.bottom = '35%';
+                        
+                        // Girl moves closer and reacts
+                        setTimeout(() => {
+                            girl.style.right = '35%';
+                            
+                            // Girl happy reaction
+                            setTimeout(() => {
+                                animateGirlHappy();
+                                
+                                // Show heart above them
+                                setTimeout(() => {
+                                    heart.style.opacity = '1';
+                                    heart.style.transform = 'scale(1)';
+                                    heart.style.top = '30%';
+                                    heart.style.left = '50%';
+                                    heart.style.marginLeft = '-7.5%';
+                                    
+                                    // Transition to final scene
+                                    setTimeout(showFinalMessage, 2000);
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                    }, 1000);
+                }, 2000);
+            }, 1000);
+        }
+        
+        // Final scene with message
+        function showFinalMessage() {
+            // Create intense neon effect
+            createIntenseNeonEffect();
+            
+            // Fade characters slightly
+            boy.style.opacity = '0.6';
+            girl.style.opacity = '0.6';
+            rose.style.opacity = '0.6';
+            
+            // Show final message with animation
+            finalMessage.style.opacity = '1';
+            finalMessage.style.animation = 'pulse 2s infinite ease-in-out';
+            
+            // Add floating hearts in the background
+            createFloatingHearts();
+        }
+        
+        // Create intense neon particles for final effect
+        function createIntenseNeonEffect() {
+            const colors = ['#5edfff', '#ff9eee', '#ff3a7c', '#39ff14', '#ffbf40'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Size
+                    const size = Math.random() * 6 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Position
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    // Color with glow
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.backgroundColor = color;
+                    particle.style.boxShadow = `0 0 15px ${color}`;
+                    
+                    particles.appendChild(particle);
+                    
+                    // Animate
+                    setTimeout(() => {
+                        particle.style.transition = `all ${Math.random() * 10 + 10}s ease-out`;
+                        particle.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+                        particle.style.opacity = Math.random() * 0.7 + 0.3;
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            particle.style.opacity = '0';
+                            setTimeout(() => {
+                                particles.removeChild(particle);
+                            }, 1000);
+                        }, 8000);
+                    }, 100);
+                }, i * 100);
+            }
+        }
+        
+        function createFloatingHearts() {
+            const colors = ['#ff3a7c', '#ff5ebc', '#ff9eee'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const floatingHeart = document.createElement('div');
+                    floatingHeart.style.position = 'absolute';
+                    floatingHeart.style.width = `${Math.random() * 30 + 20}px`;
+                    floatingHeart.style.height = `${Math.random() * 30 + 20}px`;
+                    floatingHeart.style.left = `${Math.random() * 100}%`;
+                    floatingHeart.style.bottom = '0';
+                    floatingHeart.style.opacity = '0';
+                    floatingHeart.style.zIndex = '15';
+                    
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    floatingHeart.innerHTML = `
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50,30 L65,15 A15,15 0 0,1 85,35 L50,70 L15,35 A15,15 0 0,1 35,15 L50,30" 
+                            stroke="${color}" stroke-width="3" fill="none" />
+                        </svg>
+                    `;
+                    
+                    sceneContainer.appendChild(floatingHeart);
+                    
+                    // Animate floating heart
+                    setTimeout(() => {
+                        floatingHeart.style.transition = `all ${Math.random() * 8 + 7}s ease-out`;
+                        floatingHeart.style.transform = `translateY(-${Math.random() * 70 + 30}vh) rotate(${Math.random() * 60 - 30}deg)`;
+                        floatingHeart.style.opacity = '0.8';
+                        floatingHeart.style.filter = `drop-shadow(0 0 8px ${color})`;
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            floatingHeart.style.opacity = '0';
+                            setTimeout(() => {
+                                sceneContainer.removeChild(floatingHeart);
+                            }, 1000);
+                        }, 6000);
+                    }, 100);
+                }, i * 300);
+            }
+        }
+        
+        // Initialize on page load
+        window.onload = initScene;
+    </script>
+</body>
+</html>
